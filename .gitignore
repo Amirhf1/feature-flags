@@ -1,0 +1,43 @@
+## Laravel specific
+/vendor/
+/node_modules/
+/public/storage
+/public/hot
+/storage/*.key
+/storage/oauth-private.key
+/storage/oauth-public.key
+/storage/framework/
+/storage/logs/
+
+## Environment files
+.env
+.env.*
+
+## IDE and editor files
+.idea/
+.vscode/
+
+## OS generated files
+.DS_Store
+Thumbs.db
+
+## Composer and NPM dependencies
+composer.lock
+yarn.lock
+package-lock.json
+
+## Logs and cache
+*.log
+*.cache
+
+## Debugging files
+.phpunit.result.cache
+
+## Deployment files
+.env.backup
+.phpstorm.meta.php
+
+## Custom exclusions
+/tests/_output/
+/tests/_support/_generated/
+/tests/_data/
