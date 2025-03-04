@@ -1,0 +1,39 @@
+{
+  "name": "amirhf1/feature-flags",
+  "description": "A feature flags package for Laravel.",
+  "type": "library",
+  "require": {
+    "php": "^7.4 || ^8.0",
+    "illuminate/support": "^8.0 || ^9.0 || ^10.0"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^9.5",
+    "orchestra/testbench": "^8.18",
+    "nunomaduro/collision": "^6.4"
+  },
+  "autoload": {
+    "psr-4": {
+      "Amirhf1\\FeatureFlags\\": "src/"
+    },
+    "files": [
+      "src/helpers.php"
+    ]
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Amirhf1\\FeatureFlags\\Tests\\": "tests/"
+    }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Amirhf1\\FeatureFlags\\Providers\\FeatureFlagsServiceProvider"
+      ]
+    }
+  },
+  "scripts": {
+    "test": "phpunit"
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true
+}
