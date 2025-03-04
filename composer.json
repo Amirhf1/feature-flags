@@ -1,7 +1,9 @@
 {
   "name": "amirhf1/feature-flags",
-  "description": "A feature flags package for Laravel.",
+  "description": "This package provides a simple and flexible feature flag system for Laravel applications. It allows developers to enable or disable features dynamically, roll out features to a percentage of users, or restrict features to specific users.",
   "type": "library",
+  "license": "MIT",
+  "homepage": "https://github.com/Amirhf1/feature-flags",
   "require": {
     "php": "^7.4 || ^8.0",
     "illuminate/support": "^8.0 || ^9.0 || ^10.0"
