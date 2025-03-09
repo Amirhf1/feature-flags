@@ -13,6 +13,15 @@ class FeatureFlags
         return mt_rand(1, 100);
     }
 
+    private function generateConsistentPercentage(string $feature, $user = null): int
+    {
+        $seed = $user ? $user->id : request()->ip();
+
+        $hash = md5($feature . $seed);
+
+        return (hexdec(substr($hash, 0, 8)) % 100) + 1;
+    }
+
     public function isEnabled(string $feature, $user = null): bool
     {
         // Check cache first
@@ -27,7 +36,7 @@ class FeatureFlags
 
             // Check percentage rollout
             if (isset($flag['percentage']) && is_numeric($flag['percentage'])) {
-                return $this->generateRandomPercentage() <= $flag['percentage'];
+                return $this->generateConsistentPercentage($feature, $user) <= $flag['percentage'];
             }
 
             // Check user-specific rollout
@@ -50,7 +59,7 @@ class FeatureFlags
 
             // Check percentage rollout from DB
             if ($flag->percentage > 0) {
-                return $this->generateRandomPercentage() <= $flag->percentage;
+                return $this->generateConsistentPercentage($feature, $user) <= $flag->percentage;
             }
 
             return $flag->enabled;

@@ -1,106 +1,154 @@
 # Feature Flags for Laravel
 
-## Introduction
+## معرفی
+این پکیج یک سیستم ساده و انعطاف‌پذیر Feature Flag برای اپلیکیشن‌های لاراول فراهم می‌کند. به کمک این پکیج می‌توانید:
+- فیچرها را به صورت داینامیک فعال/غیرفعال کنید
+- فیچرها را برای درصد مشخصی از کاربران فعال کنید
+- فیچرها را برای کاربران خاص محدود کنید
+- از کش برای بهبود عملکرد استفاده کنید
 
-This package provides a simple and flexible feature flag system for Laravel applications. It allows developers to enable or disable features dynamically, roll out features to a percentage of users, or restrict features to specific users.
+## نصب
 
-## Installation
-
-You can install the package via Composer:
+نصب از طریق Composer:
 
 ```bash
 composer require amirhf1/feature-flags
 ```
 
-## Configuration
+## پیکربندی
 
-Publish the configuration file:
+انتشار فایل کانفیگ:
 
 ```bash
 php artisan vendor:publish --tag=feature-flags-config
 ```
 
-This will create a `config/feature-flags.php` file where you can define feature flags.
+این دستور یک فایل `config/feature-flags.php` ایجاد می‌کند که می‌توانید feature flag ها را در آن تعریف کنید.
 
-Example configuration:
+مثال کانفیگ:
 
 ```php
 return [
     'flags' => [
         'new_feature' => [
             'enabled' => true,
-            'percentage' => 50,     // Only enable for 50% of users
-            'users' => [1, 2, 3],   // Enable only for specific user IDs
+            'percentage' => 50,     // فعال برای ۵۰ درصد کاربران
+            'users' => [1, 2, 3],   // فعال فقط برای این کاربران
         ],
     ],
 ];
 ```
 
-## Running Migrations
+## اجرای مایگریشن‌ها
 
-Run the database migrations to create the necessary tables:
+برای ایجاد جداول مورد نیاز در دیتابیس:
 
 ```bash
 php artisan migrate
 ```
 
-## Usage
+## نحوه استفاده
 
-### Checking Feature Flags
+### بررسی وضعیت Feature Flag
 
-You can check if a feature is enabled in your application using the `FeatureFlags` class or helper function:
+استفاده از کلاس `FeatureFlags`:
 
 ```php
 use Amirhf1\FeatureFlags\FeatureFlags;
 
 $featureFlags = new FeatureFlags();
 if ($featureFlags->isEnabled('new_feature', auth()->user())) {
-    // Feature is enabled
+    // فیچر فعال است
 }
 ```
 
-Or use the helper function:
+یا استفاده از helper function:
 
 ```php
 if (feature_enabled('new_feature')) {
-    // Feature is enabled
+    // فیچر فعال است
 }
+```
+
+### استفاده در Blade
+
+```php
+@if(feature_enabled('new_feature'))
+    {{-- نمایش فیچر جدید --}}
+@else
+    {{-- نمایش نسخه قدیمی --}}
+@endif
 ```
 
 ### Middleware
 
-To protect routes based on feature flags, you can use the provided middleware:
+محافظت از روت‌ها با استفاده از middleware:
 
 ```php
-Route::middleware(['feature-flag:new_feature'])->get('/new-feature', function () {
-    return 'This feature is enabled!';
+Route::middleware(['feature-flag:new_feature'])->group(function () {
+    Route::get('/new-feature', 'FeatureController@index');
 });
 ```
 
-### Artisan Commands
+### دستورات Artisan
 
-Enable a feature:
-
+فعال کردن یک فیچر:
 ```bash
 php artisan feature-flags:enable new_feature
 ```
 
-Disable a feature:
-
+غیرفعال کردن یک فیچر:
 ```bash
 php artisan feature-flags:disable new_feature
 ```
 
-List all feature flags:
-
+نمایش لیست تمام فیچرها:
 ```bash
 php artisan feature-flags:list
 ```
 
-## Running Tests
+## نکات مهم برای استفاده در Production
 
-You can run tests with:
+### پایداری نمایش فیچرها
+این پکیج از یک الگوریتم پایدار برای نمایش فیچرها به درصد مشخصی از کاربران استفاده می‌کند. این یعنی:
+- هر کاربر همیشه تجربه یکسانی خواهد داشت
+- با رفرش کردن صفحه، وضعیت فیچر تغییر نمی‌کند
+- توزیع واقعی کاربران دقیقاً مطابق با درصد تعیین شده خواهد بود
+
+### کش‌کردن
+برای بهبود پرفورمنس، نتایج به مدت ۱۰ دقیقه کش می‌شوند. می‌توانید از درایورهای مختلف کش مثل Redis یا Memcached استفاده کنید.
+
+### مانیتورینگ
+پیشنهاد می‌شود برای فیچرهای حساس، سیستم لاگینگ پیاده‌سازی کنید:
+
+```php
+Log::info('Feature flag check', [
+    'feature' => 'new_feature',
+    'user' => auth()->id(),
+    'enabled' => feature_enabled('new_feature')
+]);
+```
+
+### استراتژی Rollout
+1. ابتدا فیچر را برای تیم داخلی فعال کنید
+2. سپس برای درصد کمی از کاربران (مثلاً ۵٪) فعال کنید
+3. به تدریج درصد را افزایش دهید
+4. در صورت بروز مشکل، سریعاً فیچر را غیرفعال کنید
+
+## اجرای تست‌ها
+
+برای اجرای تست‌ها:
 
 ```bash
 vendor/bin/phpunit
 ```
+
+## نیازمندی‌ها
+- PHP ^7.4 || ^8.0
+- Laravel ^8.0 || ^9.0 || ^10.0
+
+## لایسنس
+این پکیج تحت لایسنس MIT منتشر شده است.
+
+## مشارکت
+از مشارکت شما در بهبود این پکیج استقبال می‌کنیم. لطفاً قبل از ارسال Pull Request، تست‌ها را اجرا کنید.
